@@ -3,9 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:NostalgiaMenu.Controls"
         Title="NostalgiaMenu"
-        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize"
+        Width="920"
+        Height="560"
         Background="{StaticResource BackgroundBrush}"
         KeyDown="Window_KeyDown">
 
@@ -39,16 +41,18 @@
 
         <!-- ═══ Game Tiles ═══ -->
         <ScrollViewer Grid.Row="1"
-                      HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Disabled"
-                      PanningMode="HorizontalOnly"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      PanningMode="VerticalOnly"
                       Padding="0">
             <ItemsControl x:Name="GameItemsControl"
                           Margin="24,16,24,16"
-                          Focusable="False">
+                          Focusable="False"
+                          HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal" />
+                        <WrapPanel Orientation="Horizontal"
+                                   HorizontalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
