@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+# NuGet (none used, but good habit)
+packages/
+*.nupkg
+
+# Compiled resources
+*.aps
+*.pch
+*.sbr
+Thumbs.db
