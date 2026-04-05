@@ -6,8 +6,6 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="NoResize"
-        Width="920"
-        Height="560"
         Background="{StaticResource BackgroundBrush}"
         KeyDown="Window_KeyDown">
 

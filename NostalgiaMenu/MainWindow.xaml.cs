@@ -71,6 +71,8 @@ namespace NostalgiaMenu
             if (_defaultGame != null)
                 orderedGames.Insert(0, _defaultGame);
 
+            SizeWindowToGames(orderedGames.Count, _defaultGame != null);
+
             foreach (var game in orderedGames)
                 GameItemsControl.Items.Add(BuildTile(game));
 
@@ -79,6 +81,31 @@ namespace NostalgiaMenu
                 DefaultGameLabel.Text = _defaultGame.DisplayName;
                 StartCountdown();
             }
+        }
+
+        // ──────────────────────────────────────────────────────────────
+        // Window Sizing
+        // ──────────────────────────────────────────────────────────────
+
+        private void SizeWindowToGames(int gameCount, bool hasCountdown)
+        {
+            const int tileOuter   = 244;  // 220px tile + 12px margin each side
+            const int maxColumns  = 5;
+            const int sidePad     = 48;   // 24px left + 24px right (ItemsControl margin)
+            const int headerH     = 90;
+            const int footerH     = 130;
+            const int contentPadV = 32;   // 16px top + 16px bottom (ItemsControl margin)
+
+            int cols = Math.Min(gameCount, maxColumns);
+            int rows = (int)Math.Ceiling(gameCount / (double)cols);
+
+            double desiredW = cols * tileOuter + sidePad;
+            double desiredH = headerH + contentPadV + rows * tileOuter + (hasCountdown ? footerH : 0);
+
+            // Clamp to usable screen area
+            var screen = SystemParameters.WorkArea;
+            Width  = Math.Min(desiredW, screen.Width  - 40);
+            Height = Math.Min(desiredH, screen.Height - 40);
         }
 
         // ──────────────────────────────────────────────────────────────
