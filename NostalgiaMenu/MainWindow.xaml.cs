@@ -38,7 +38,7 @@ namespace NostalgiaMenu
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            string iniPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, IniFileName);
+            string iniPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, IniFileName);
 
             if (!File.Exists(iniPath))
             {
@@ -86,11 +86,16 @@ namespace NostalgiaMenu
         // Window Sizing
         // ──────────────────────────────────────────────────────────────
 
+        // ── Adjust these to control the window width limits ──────────
+        private const double MinWindowWidth = 700;
+        private const double MaxWindowWidth = 1400;
+        // ─────────────────────────────────────────────────────────────
+
         private void SizeWindowToGames(int gameCount, bool hasCountdown)
         {
             const int tileOuter   = 244;  // 220px tile + 12px margin each side
             const int maxColumns  = 5;
-            const int sidePad     = 48;   // 24px left + 24px right (ItemsControl margin)
+            const int sidePad     = 120;  // breathing room left + right
             const int headerH     = 90;
             const int footerH     = 130;
             const int contentPadV = 32;   // 16px top + 16px bottom (ItemsControl margin)
@@ -101,10 +106,13 @@ namespace NostalgiaMenu
             double desiredW = cols * tileOuter + sidePad;
             double desiredH = headerH + contentPadV + rows * tileOuter + (hasCountdown ? footerH : 0);
 
-            // Clamp to usable screen area
             var screen = SystemParameters.WorkArea;
-            Width  = Math.Min(desiredW, screen.Width  - 40);
+            Width  = Math.Min(Math.Max(desiredW, MinWindowWidth), Math.Min(MaxWindowWidth, screen.Width  - 40));
             Height = Math.Min(desiredH, screen.Height - 40);
+
+            // Center manually — WindowStartupLocation only applies before the window is shown
+            Left = screen.Left + (screen.Width  - Width)  / 2.0;
+            Top  = screen.Top  + (screen.Height - Height) / 2.0;
         }
 
         // ──────────────────────────────────────────────────────────────
@@ -393,7 +401,7 @@ namespace NostalgiaMenu
 
             try
             {
-                string workDir = Path.GetDirectoryName(entry.LauncherPath)
+                string workDir = System.IO.Path.GetDirectoryName(entry.LauncherPath)
                               ?? AppDomain.CurrentDomain.BaseDirectory;
 
                 Process.Start(new ProcessStartInfo
