@@ -65,11 +65,10 @@ namespace NostalgiaMenu
                 return;
             }
 
-            // Default game tile goes first
-            _defaultGame = games.FirstOrDefault(g => g.IsDefault);
-            var orderedGames = games.Where(g => !g.IsDefault).ToList();
-            if (_defaultGame != null)
-                orderedGames.Insert(0, _defaultGame);
+            // First game in the file is the default
+            games[0].IsDefault = true;
+            _defaultGame = games[0];
+            var orderedGames = games;
 
             SizeWindowToGames(orderedGames.Count, _defaultGame != null);
 
@@ -114,16 +113,15 @@ namespace NostalgiaMenu
 
         private static List<GameEntry> LoadGames(string iniPath)
         {
-            var ini   = IniParser.Parse(iniPath);
-            var games = new List<GameEntry>();
+            var sections = IniParser.Parse(iniPath);
+            var games    = new List<GameEntry>();
 
-            foreach (var section in ini)
+            foreach (var section in sections)
             {
                 var kv = section.Value;
                 if (!kv.ContainsKey("launcher") || string.IsNullOrEmpty(kv["launcher"]))
                     continue;
 
-                bool isDefault = section.Key.Equals("DEFAULT GAME", StringComparison.OrdinalIgnoreCase);
                 string display = kv.ContainsKey("name") ? kv["name"] : section.Key;
 
                 games.Add(new GameEntry
@@ -133,7 +131,7 @@ namespace NostalgiaMenu
                     LauncherPath = kv["launcher"],
                     ImagePath    = kv.ContainsKey("image") ? kv["image"] : null,
                     Color        = kv.ContainsKey("color") ? kv["color"] : null,
-                    IsDefault    = isDefault
+                    IsDefault    = false
                 });
             }
 
@@ -447,10 +445,10 @@ namespace NostalgiaMenu
             sb.AppendLine("; color    = gold | blue         (optional tile accent)");
             sb.AppendLine("; name     = Display Name        (optional label override)");
             sb.AppendLine(";");
-            sb.AppendLine("; [DEFAULT GAME] auto-launches after 60 seconds.");
+            sb.AppendLine("; The FIRST section is the default game — it auto-launches after 60 seconds.");
             sb.AppendLine("; ─────────────────────────────────────────────────");
             sb.AppendLine();
-            sb.AppendLine("[DEFAULT GAME]");
+            sb.AppendLine("[Nostalgia]");
             sb.AppendLine("name     = Nostalgia");
             sb.AppendLine("launcher = C:\\Games\\Nostalgia\\start.bat");
             sb.AppendLine("image    = C:\\Games\\Nostalgia\\cover.png");

@@ -6,15 +6,15 @@ namespace NostalgiaMenu.Parsers
 {
     public static class IniParser
     {
-        public static Dictionary<string, Dictionary<string, string>> Parse(string filePath)
+        // Returns sections in file order; duplicate section names produce separate entries.
+        public static List<KeyValuePair<string, Dictionary<string, string>>> Parse(string filePath)
         {
-            var result = new Dictionary<string, Dictionary<string, string>>(
-                StringComparer.OrdinalIgnoreCase);
+            var result = new List<KeyValuePair<string, Dictionary<string, string>>>();
 
             if (!File.Exists(filePath))
                 return result;
 
-            string currentSection = null;
+            Dictionary<string, string> current = null;
 
             foreach (string rawLine in File.ReadLines(filePath))
             {
@@ -28,15 +28,14 @@ namespace NostalgiaMenu.Parsers
                     int close = line.IndexOf(']');
                     if (close > 1)
                     {
-                        currentSection = line.Substring(1, close - 1).Trim();
-                        if (!result.ContainsKey(currentSection))
-                            result[currentSection] = new Dictionary<string, string>(
-                                StringComparer.OrdinalIgnoreCase);
+                        string sectionName = line.Substring(1, close - 1).Trim();
+                        current = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                        result.Add(new KeyValuePair<string, Dictionary<string, string>>(sectionName, current));
                     }
                     continue;
                 }
 
-                if (currentSection == null) continue;
+                if (current == null) continue;
 
                 int eq = line.IndexOf('=');
                 if (eq < 1) continue;
@@ -48,7 +47,7 @@ namespace NostalgiaMenu.Parsers
                 if (commentPos >= 0)
                     value = value.Substring(0, commentPos).TrimEnd();
 
-                result[currentSection][key] = value;
+                current[key] = value;
             }
 
             return result;
